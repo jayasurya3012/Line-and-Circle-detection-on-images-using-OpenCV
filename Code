@@ -1,0 +1,58 @@
+import numpy as np 
+import pandas as pd 
+import seaborn as sb
+import math
+import cv2
+import matplotlib.pyplot as plt
+
+img = cv2.imread("image.png")
+img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+gray_blur = cv2.GaussianBlur(img_gray, (9, 9), 2)
+img_canny = cv2.Canny(gray_blur, 50, 100)
+rows = gray_blur.shape[0]
+
+circles = cv2.HoughCircles(img_canny, cv2.HOUGH_GRADIENT, 1, rows / 8,
+                           param1=100, param2=20,
+                           minRadius=1, maxRadius=110)
+cr=[]
+if circles is not None:
+       circles = np.uint16(np.around(circles))
+       for i in circles[0, :]:
+           center = (i[0], i[1])
+           # circle center
+           cv2.circle(img, center, 1, (0, 100, 100), 3)
+           # circle outline
+           radius = i[2]
+           cv2.circle(img, center, radius, (255, 0, 255), 3)
+           cr.append([i[0],i[1],radius])													 
+
+plt.imshow(img)
+df1 = pd.DataFrame(cr, columns = ['x1','y1','radius'])
+df1.to_csv('Circle_coordinates.csv', encoding = 'utf-8-sig') 
+files.download('Circle_coordinates.csv')
+
+
+img = cv2.imread("image.png")
+img_canny = cv2.Canny(gray_blur, 50, 100)
+img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+gray_blur = cv2.GaussianBlur(img_gray, (9, 9), 2)
+kernel = np.ones((3, 3))
+img_dilate = cv2.dilate(img_canny, kernel, iterations=2)
+img_erode = cv2.erode(img_dilate, kernel, iterations=1)
+rows = gray_blur.shape[0]
+
+linesP = cv2.HoughLinesP(img_canny, 1, np.pi / 180, 50, None, 50, 10)
+
+li=[]
+
+if linesP is not None:
+        for i in range(0, len(linesP)):
+            l = linesP[i][0]
+            li.append([l[0],l[1],l[2],l[3]])
+            cv2.line(img, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv2.LINE_AA)
+						
+plt.imshow(img)
+df2= pd.DataFrame(li, columns = ['x1','y1','x2','y2'])
+df1 = pd.DataFrame(cr, columns = ['x1','y1','radius'])
+df2.to_csv('Line_coordinates.csv', encoding = 'utf-8-sig') 
+files.download('Line_coordinates.csv')
