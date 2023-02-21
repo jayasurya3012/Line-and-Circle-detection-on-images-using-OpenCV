@@ -28,11 +28,15 @@ img = cv2.imread("image.png")
 ```python
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 img_canny = cv2.Canny(img_gray, 50, 100)
+#using other filters like histogram, blur, etc can also increase the efficiency of recognition for your image
 ```
 ### Position of circles and its radius
 ```python
 # returns co-ordinates of circles along with its radius to 'circle' ->(x1,y1,r)
 circle = cv2.HoughCircles(gray_img, cv2.HOUGH_GRADIENT, 1, 200)
+# using and changing other parameters like minRadius, maxRadius, param1, param2, etc 
+# can increase the efficiency of recognition for your image
+
 ```
 ### Position of Lines
 ```python
